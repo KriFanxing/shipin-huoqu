@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>抖音最高画质无水印下载</title>
+  <style>
+    :root {
+      --primary: #fe2c55;
+      --bg: #0f1015;
+      --card: #181a24;
+      --sub: #242738;
+      --text: #ffffff;
+      --dim: #8e93a6;
+      --success: #00c988;
+      --accent: #25f4ee;
+      --border: #2d3148;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 16px 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .wrap { width: 100%; max-width: 540px; }
+    header { text-align: center; margin-bottom: 20px; }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+    p.subt { font-size: 13px; color: var(--dim); }
+    .box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    textarea {
+      width: 100%;
+      height: 85px;
+      background: var(--sub);
+      border: 1px solid #3d425d;
+      border-radius: 12px;
+      color: #fff;
+      padding: 12px;
+      font-size: 14px;
+      resize: none;
+      outline: none;
+    }
+    textarea:focus { border-color: var(--primary); }
+    .btn-row { display: flex; gap: 10px; margin-top: 12px; }
+    button {
+      flex: 1;
+      height: 44px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:active { transform: scale(0.98); opacity: 0.9; }
+    button.clear { flex: 0 0 70px; background: var(--sub); color: var(--dim); }
+    .loading { display: none; text-align: center; padding: 16px; color: var(--accent); font-size: 14px; }
+    .err { display: none; background: rgba(254,44,85,0.1); border: 1px solid rgba(254,44,85,0.3); color: #ff6b8b; padding: 12px; border-radius: 10px; font-size: 13px; margin-top: 12px; }
+    .result { display: none; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .player-box { width: 100%; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 14px; }
+    video { width: 100%; max-height: 420px; outline: none; }
+    .v-title { font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
+    .v-author { font-size: 13px; color: var(--dim); margin-bottom: 14px; }
+    .dl-btn {
+      display: block;
+      text-align: center;
+      line-height: 44px;
+      background: var(--success);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    th { background: var(--sub); color: var(--dim); padding: 8px 10px; text-align: left; font-weight: 500; }
+    td { padding: 9px 10px; border-bottom: 1px solid var(--border); color: #ddd; }
+    .badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; background: var(--primary); color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>抖音最高画质解析下载</h1>
+      <p class="subt">无水印 · 自动解析原画主链 · 纯净网页版</p>
+    </header>
+
+    <div class="box">
+      <textarea id="tInput" placeholder="在此粘贴抖音视频链接或分享文本..."></textarea>
+      <div class="btn-row">
+        <button class="clear" onclick="document.getElementById('tInput').value=''">清空</button>
+        <button id="pBtn" onclick="doParse()">⚡ 开始解析最高画质</button>
+      </div>
+      <div class="err" id="errBox"></div>
+      <div class="loading" id="loadBox">⏳ 正在解析并获取视频直链...</div>
+    </div>
+
+    <div class="result box" id="resBox">
+      <div class="player-box">
+        <video id="vPlayer" controls playsinline></video>
+      </div>
+      <div class="v-title" id="vTitle">-</div>
+      <div class="v-author" id="vAuthor">-</div>
+
+      <a id="dlBtn" class="dl-btn" href="#" target="_blank" download>📥 保存到手机相册 / 下载文件</a>
+
+      <div style="font-size: 13px; font-weight: 600; margin-top: 14px; margin-bottom: 6px;">📊 档位列表</div>
+      <table>
+        <thead>
+          <tr>
+            <th>档位</th>
+            <th>分辨率</th>
+            <th>类型</th>
+          </tr>
+        </thead>
+        <tbody id="tbBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function doParse() {
+      const txt = document.getElementById('tInput').value.trim();
+      const err = document.getElementById('errBox');
+      const load = document.getElementById('loadBox');
+      const res = document.getElementById('resBox');
+      const btn = document.getElementById('pBtn');
+
+      err.style.display = 'none';
+      if (!txt) {
+        err.innerText = '请先输入抖音链接！';
+        err.style.display = 'block';
+        return;
+      }
+
+      const match = txt.match(/https?:\/\/[^\s]+/);
+      const url = match ? match[0] : txt;
+
+      btn.disabled = true;
+      load.style.display = 'block';
+      res.style.display = 'none';
+
+      const maxRetries = 5;
+      let attempt = 0;
+
+      while (attempt < maxRetries) {
+        try {
+          load.innerText = attempt === 0 ? '⏳ 正在请求 bugpk 接口解析...' : `⏳ 接口繁忙(429)，正在第 ${attempt + 1} 次重试...`;
+          
+          const r = await fetch('https://api.bugpk.com/api/douyin/video?url=' + encodeURIComponent(url));
+          const resJson = await r.json();
+
+          if (resJson.code === 429) {
+            attempt++;
+            if (attempt < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, 4000));
+              continue;
+            }
+            throw new Error('接口当前请求满载(429)，已自动重试5次，请稍后再试');
+          }
+
+          const d = resJson.data || resJson;
+          if (!d || !d.url) {
+            throw new Error(resJson.msg || resJson.message || '无法解析到视频直链，请检查链接有效性');
+          }
+
+          document.getElementById('vTitle').innerText = d.title || '抖音视频';
+          document.getElementById('vAuthor').innerText = '作者: ' + (d.author?.name || d.author_name || '抖音用户');
+
+          const videoUrl = d.url;
+          document.getElementById('vPlayer').src = videoUrl;
+          document.getElementById('dlBtn').href = videoUrl;
+
+          const tb = document.getElementById('tbBody');
+          tb.innerHTML = '<tr><td>① 主链</td><td><span class="badge">最高画质 (原画)</span></td><td>无水印直链</td></tr>';
+
+          if (d.video_backup && Array.isArray(d.video_backup)) {
+            d.video_backup.forEach((b, i) => {
+              const wh = (b.width && b.height) ? (b.width + 'x' + b.height) : '备份档位';
+              tb.innerHTML += '<tr><td>② backup[' + i + ']</td><td>' + wh + '</td><td>备用流</td></tr>';
+            });
+          }
+
+          res.style.display = 'block';
+          break;
+        } catch (e) {
+          if (attempt >= maxRetries - 1 || !e.message.includes('429')) {
+            err.innerText = '错误: ' + e.message;
+            err.style.display = 'block';
+            break;
+          }
+          attempt++;
+          await new Promise(resolve => setTimeout(resolve, 4000));
+        }
+      }
+
+      btn.disabled = false;
+      load.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
