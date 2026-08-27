@@ -18,7 +18,7 @@ textarea{display:block;width:100%;height:102px;background:var(--sub);border:1px 
 </style>
 </head>
 <body><main class="wrap">
-<header class="hero"><div class="logo" aria-hidden="true">⚡</div><h1>抖音最高画质解析下载</h1><p class="subt">无水印 · 自动解析原画主链 · 纯净网页版</p><p class="update-note">繁星制作 · 2026-8-27-14：43更新</p></header>
+<header class="hero"><div class="logo" aria-hidden="true">⚡</div><h1>抖音最高画质解析下载</h1><p class="subt">无水印 · 自动解析原画主链 · 纯净网页版</p><p class="update-note">繁星制作 · 2026-8-27-17：40更新</p></header>
 <section class="box" aria-label="视频链接解析">
 <div class="input-head"><span>粘贴抖音分享链接或文本</span><button class="paste" id="pasteBtn" type="button">📋 粘贴链接</button></div>
 <textarea id="tInput" maxlength="5000" placeholder="例如：打开抖音，复制视频分享文本后粘贴到这里…"></textarea>
@@ -38,7 +38,7 @@ function first(obj,keys, fallback=''){if(!obj||typeof obj!=='object')return fall
 function formatRate(v){if(!v)return '-';const n=Number(v);if(!Number.isFinite(n)||n<=0)return String(v);return (n>100000?(n/1000000).toFixed(2):(n/1000).toFixed(2))+' Mbps'}
 function formatSize(v){if(!v)return '-';const n=Number(v);if(!Number.isFinite(n)||n<=0)return String(v);return n>1000000?(n/1048576).toFixed(1)+' MB':n>1000?(n/1024).toFixed(1)+' MB':n+' MB'}
 function qualityName(w,h){const short=Math.min(Number(w)||0,Number(h)||0);if(short>=2160)return '4K';if(short>=1440)return '2K';if(short>=1080)return '1080p';if(short>=720)return '720p';if(short>=540)return '540p';if(short>=480)return '480p';return short?'低于480p':'-'}
-function fps(b){const v=first(b,['fps','frame_rate','frameRate','framerate']);if(!v)return '30 fps';const s=String(v).trim();return s.endsWith('fps')?s:`${s} fps`}
+function fps(b){const v=first(b,['fps','frame_rate','frameRate','framerate']);if(!v)return '未验证';const s=String(v).trim();return s.endsWith('fps')?s:`${s} fps`}
 function extractMeta(obj,durSec){if(!obj)return{};if(typeof obj==='string')return{url:obj};const w=first(obj,['width','w','video_width']);const h=first(obj,['height','h','video_height']);let res='';if(w&&h){res=`${qualityName(w,h)} (${w}×${h})`}else{const q=first(obj,['quality','quality_label','gear_name']);if(q)res=q}const br=first(obj,['bit_rate','bitrate','vbitrate']);let sz=first(obj,['size','filesize','file_size']);if(!sz&&br&&durSec&&durSec>0){sz=Math.round((Number(br)*durSec)/8)}return{width:w,height:h,res:res,fps:fps(obj),bitrate:br,size:sz}}
 
 let mainRow=null;function addRow(label,b,url,main=false,filename,durSec=0){const tr=document.createElement('tr');let meta=extractMeta(b,durSec);let resStr=meta.res||'-';const vals=[label,resStr,meta.fps,formatRate(meta.bitrate),formatSize(meta.size)];vals.forEach((v,i)=>{const td=document.createElement('td');if(i===0&&main){const badge=document.createElement('span');badge.className='badge';badge.textContent='最高画质';td.append(badge)}else td.textContent=v;tr.append(td)});if(main)mainRow=tr;const td=document.createElement('td');if(url){const btn=document.createElement('button');btn.className='mini-dl';btn.textContent='下载';btn.addEventListener('click',e=>{e.preventDefault();downloadUrl(url,filename||'视频.mp4')});td.append(btn)}else td.textContent='仅展示';tr.append(td);table.append(tr)}
